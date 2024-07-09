@@ -2,6 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom, map } from 'rxjs';
+import { Message } from './models';
+import { commands, messages } from './constants';
 
 interface EnvironmentVariables {
   TELEGRAM_TOKEN: string;
@@ -9,7 +11,7 @@ interface EnvironmentVariables {
 }
 
 @Injectable()
-export class TelegamService implements OnModuleInit {
+export class TelegramService implements OnModuleInit {
   constructor(
     private readonly httpService: HttpService,
     private configService: ConfigService<EnvironmentVariables>,
@@ -36,7 +38,7 @@ export class TelegamService implements OnModuleInit {
     const data = await lastValueFrom(
       this.httpService
         .get(
-          `https://api.telegram.org/bot${this.tgToken}/setWebhook?url=${this.apiUrl}/bot/updates`,
+          `https://api.telegram.org/bot${this.tgToken}/setWebhook?url=${this.apiUrl}/bot/telegram/updates`,
         )
         .pipe(map((res) => res.data)),
     );
@@ -58,7 +60,7 @@ export class TelegamService implements OnModuleInit {
     switch (action) {
       case 'sendMessage': {
         const body = {
-          chat_id: data.chatid,
+          chat_id: data.chatId,
           text: data.message,
           parse_mode: 'HTML',
         };
@@ -68,9 +70,19 @@ export class TelegamService implements OnModuleInit {
         return response;
       }
 
+      case 'setMyCommands': {
+        const body = {
+          commands: data.commands,
+        };
+
+        const response = this.sendRequest({ url: 'setMyCommands', body });
+
+        return response;
+      }
+
       case 'sendPhoto': {
         const body = {
-          chat_id: data.chatid,
+          chat_id: data.chatId,
           photo: data.photo,
           caption: data.caption,
           reply_markup: JSON.stringify({
@@ -85,6 +97,42 @@ export class TelegamService implements OnModuleInit {
 
       default:
         return null;
+    }
+  }
+
+  async updates(body) {
+    if (body.message) {
+      await this.processMessage(body);
+
+      return true;
+    }
+
+    return true;
+  }
+
+  async processMessage(body: Message) {
+    const messageText = body.message.text;
+
+    if (messageText === commands.start.value) {
+      await this.createRequest({
+        action: 'setMyCommands',
+        data: {
+          commands: [
+            {
+              command: commands.start.value,
+              description: commands.start.description,
+            },
+          ],
+        },
+      });
+
+      await this.createRequest({
+        action: 'sendPhoto',
+        data: {
+          chatId: body.message.chat.id,
+          ...messages.greetings,
+        },
+      });
     }
   }
 }

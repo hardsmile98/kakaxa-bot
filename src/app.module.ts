@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TelegamModule } from './telegam/telegam.module';
+import { TelegramModule } from './telegam/telegram.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TelegamModule,
+    TelegramModule,
   ],
 })
 export class AppModule {}
