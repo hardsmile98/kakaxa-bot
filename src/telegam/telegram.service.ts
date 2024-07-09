@@ -101,13 +101,19 @@ export class TelegramService implements OnModuleInit {
   }
 
   async updates(body) {
-    if (body.message) {
-      await this.processMessage(body);
+    try {
+      if (body.message) {
+        await this.processMessage(body);
+
+        return true;
+      }
+
+      return true;
+    } catch (e) {
+      console.log('Error in updates: ', e.message);
 
       return true;
     }
-
-    return true;
   }
 
   async processMessage(body: Message) {
