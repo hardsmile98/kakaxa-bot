@@ -1,12 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 
 @Controller('telegram')
 export class TelegramController {
   constructor(private telegramService: TelegramService) {}
 
-  @Post('/updates')
-  updates(@Body() body) {
-    return this.telegramService.updates(body);
+  @Post('/updates/:token')
+  updates(@Body() body, @Param('token') token: string) {
+    return this.telegramService.updates(token, body);
   }
 }

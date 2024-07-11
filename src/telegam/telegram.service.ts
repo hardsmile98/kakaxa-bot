@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom, map } from 'rxjs';
 import { Message } from './models';
@@ -38,7 +38,7 @@ export class TelegramService implements OnModuleInit {
     const data = await lastValueFrom(
       this.httpService
         .get(
-          `https://api.telegram.org/bot${this.tgToken}/setWebhook?url=${this.apiUrl}/bot/telegram/updates`,
+          `https://api.telegram.org/bot${this.tgToken}/setWebhook?url=${this.apiUrl}/bot/telegram/updates/${this.tgToken}`,
         )
         .pipe(map((res) => res.data)),
     );
@@ -100,7 +100,11 @@ export class TelegramService implements OnModuleInit {
     }
   }
 
-  async updates(body) {
+  async updates(token: string, body) {
+    if (token !== this.tgToken) {
+      throw new BadRequestException('Неверный запрос');
+    }
+
     try {
       if (body.message) {
         await this.processMessage(body);
