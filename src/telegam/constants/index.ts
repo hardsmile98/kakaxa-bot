@@ -7,13 +7,13 @@ const commands = {
 
 const messages = {
   greetings: {
-    photo:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzvKzdSw_jbX9UC91HWk58RoJtwLw5Y1WotQ&s',
-    caption: 'Text!',
+    photo: 'https://i.ibb.co/MZtMGRD/Banner.png',
+    caption:
+      'You want to see how agile you are?\nDive into the KAKAXA world and find out!',
     keyboard: [
       [
         {
-          text: 'Game',
+          text: 'Play 💩',
           web_app: {
             url: 'https://kkxlove.com/',
           },
@@ -21,7 +21,7 @@ const messages = {
       ],
       [
         {
-          text: 'Chat',
+          text: 'Join community',
           url: 'https://t.me/kakaxa_coin',
         },
       ],
