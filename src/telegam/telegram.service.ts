@@ -24,7 +24,7 @@ export class TelegramService implements OnModuleInit {
       if (data.ok) {
         console.log(data.description);
       } else {
-        throw Error('unknows');
+        throw Error('unknow error');
       }
     } catch (e) {
       console.log('Error set webhook: ', e.message);
