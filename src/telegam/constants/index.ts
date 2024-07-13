@@ -22,7 +22,7 @@ const messages = {
       [
         {
           text: 'Join community',
-          url: 'https://t.me/kakaxa_coin',
+          url: 'https://t.me/kkxlove',
         },
       ],
     ],
