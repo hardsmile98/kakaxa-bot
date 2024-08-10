@@ -20,4 +20,15 @@ type Message = {
   };
 };
 
-export type { Message };
+type SendToBot = {
+  ids: Array<number>;
+  action: 'sendMessage' | 'sendPhoto';
+  data: {
+    message?: string;
+    photo?: string;
+    caption?: string;
+    keyboard?: Array<unknown>;
+  };
+};
+
+export type { Message, SendToBot };

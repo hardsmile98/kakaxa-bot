@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom, map } from 'rxjs';
-import { Message } from './models';
+import { Message, SendToBot } from './models';
 import { commands, messages } from './constants';
 
 interface EnvironmentVariables {
@@ -63,6 +63,12 @@ export class TelegramService implements OnModuleInit {
           chat_id: data.chatId,
           text: data.message,
           parse_mode: 'HTML',
+          reply_markup:
+            data.keyboard &&
+            JSON.stringify({
+              keyboard: data.keyboard,
+              resize_keyboard: true,
+            }),
         };
 
         const response = this.sendRequest({ url: 'sendMessage', body });
@@ -85,10 +91,12 @@ export class TelegramService implements OnModuleInit {
           chat_id: data.chatId,
           photo: data.photo,
           caption: data.caption,
-          reply_markup: JSON.stringify({
-            inline_keyboard: data.keyboard,
-            resize_keyboard: true,
-          }),
+          reply_markup:
+            data.keyboard &&
+            JSON.stringify({
+              inline_keyboard: data.keyboard,
+              resize_keyboard: true,
+            }),
         };
         const response = this.sendRequest({ url: 'sendPhoto', body });
 
@@ -143,6 +151,38 @@ export class TelegramService implements OnModuleInit {
           ...messages.greetings,
         },
       });
+    }
+  }
+
+  async sendToBot(token: string, body: SendToBot) {
+    if (token !== this.tgToken) {
+      throw new BadRequestException('Error request');
+    }
+
+    if (!body?.action || body?.ids?.length === 0 || !body.data) {
+      throw new BadRequestException('Error request');
+    }
+
+    try {
+      await Promise.all(
+        body.ids.map(async (id) => {
+          try {
+            await this.createRequest({
+              action: body.action,
+              data: {
+                chatId: id,
+                ...body.data,
+              },
+            });
+          } catch (e) {
+            console.log(`Error send to user: ${id}, e: ${e.message}`);
+          }
+        }),
+      );
+
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }
