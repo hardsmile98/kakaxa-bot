@@ -158,7 +158,7 @@ export class TelegramService implements OnModuleInit {
   }
 
   async sendToBot(token: string, body: SendToBot) {
-    if (token !== this.tgToken) {
+    if (token !== this.configService.get('TELEGRAM_TOKEN')) {
       console.log(token, this.tgToken);
       throw new BadRequestException('Error request');
     }
