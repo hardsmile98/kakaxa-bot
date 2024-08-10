@@ -12,10 +12,16 @@ interface EnvironmentVariables {
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
+  private readonly tgToken: string;
+  private readonly apiUrl: string;
+
   constructor(
     private readonly httpService: HttpService,
     private configService: ConfigService<EnvironmentVariables>,
-  ) {}
+  ) {
+    this.apiUrl = this.configService.get('API_URL');
+    this.tgToken = this.configService.get('TELEGRAM_TOKEN');
+  }
 
   async onModuleInit() {
     try {
@@ -30,9 +36,6 @@ export class TelegramService implements OnModuleInit {
       console.log('Error set webhook: ', e.message);
     }
   }
-
-  private readonly tgToken = this.configService.get('TELEGRAM_TOKEN');
-  private readonly apiUrl = this.configService.get('API_URL');
 
   async setWebhook() {
     const data = await lastValueFrom(
@@ -156,21 +159,11 @@ export class TelegramService implements OnModuleInit {
 
   async sendToBot(token: string, body: SendToBot) {
     if (token !== this.tgToken) {
-      console.log(token, this.tgToken, this);
-
-      throw new BadRequestException('Error request  token');
+      throw new BadRequestException('Error request');
     }
 
-    if (!body?.action) {
-      throw new BadRequestException('Error request action');
-    }
-
-    if (body?.ids?.length === 0) {
-      throw new BadRequestException('Error request ids');
-    }
-
-    if (!body.data) {
-      throw new BadRequestException('Error request data');
+    if (!body?.action || body?.ids?.length === 0 || !body.data) {
+      throw new BadRequestException('Error request');
     }
 
     try {
