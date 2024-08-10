@@ -31,8 +31,8 @@ export class TelegramService implements OnModuleInit {
     }
   }
 
-  tgToken = this.configService.get('TELEGRAM_TOKEN');
-  apiUrl = this.configService.get('API_URL');
+  private readonly tgToken = this.configService.get('TELEGRAM_TOKEN');
+  private readonly apiUrl = this.configService.get('API_URL');
 
   async setWebhook() {
     const data = await lastValueFrom(
@@ -110,7 +110,7 @@ export class TelegramService implements OnModuleInit {
 
   async updates(token: string, body) {
     if (token !== this.tgToken) {
-      throw new BadRequestException('Неверный запрос');
+      throw new BadRequestException('Error request');
     }
 
     try {
@@ -156,7 +156,7 @@ export class TelegramService implements OnModuleInit {
 
   async sendToBot(token: string, body: SendToBot) {
     if (token !== this.tgToken) {
-      console.log(token, this.tgToken);
+      console.log(token, this.tgToken, this.apiUrl);
 
       throw new BadRequestException('Error request  token');
     }
