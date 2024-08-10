@@ -156,11 +156,19 @@ export class TelegramService implements OnModuleInit {
 
   async sendToBot(token: string, body: SendToBot) {
     if (token !== this.tgToken) {
-      throw new BadRequestException('Error request');
+      throw new BadRequestException('Error request  token');
     }
 
-    if (!body?.action || body?.ids?.length === 0 || !body.data) {
-      throw new BadRequestException('Error request');
+    if (!body?.action) {
+      throw new BadRequestException('Error request action');
+    }
+
+    if (body?.ids?.length === 0) {
+      throw new BadRequestException('Error request ids');
+    }
+
+    if (!body.data) {
+      throw new BadRequestException('Error request data');
     }
 
     try {
