@@ -12,18 +12,15 @@ interface EnvironmentVariables {
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
-  private tgToken: string;
-  private apiUrl: string;
-
   constructor(
     private readonly httpService: HttpService,
     private configService: ConfigService<EnvironmentVariables>,
   ) {}
 
-  async onModuleInit() {
-    this.apiUrl = this.configService.get('API_URL');
-    this.tgToken = this.configService.get('TELEGRAM_TOKEN');
+  private tgToken: string = this.configService.get('TELEGRAM_TOKEN');
+  private apiUrl: string = this.configService.get('API_URL');
 
+  async onModuleInit() {
     try {
       const data = await this.setWebhook();
 
@@ -159,6 +156,7 @@ export class TelegramService implements OnModuleInit {
 
   async sendToBot(token: string, body: SendToBot) {
     if (token !== this.tgToken) {
+      console.log(this);
       throw new BadRequestException('Error request');
     }
 
