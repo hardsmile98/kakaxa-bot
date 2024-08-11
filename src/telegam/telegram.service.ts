@@ -174,7 +174,7 @@ export class TelegramService implements OnModuleInit {
         console.log(`Error send to user: ${id}, e: ${e.message}`);
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 5_000));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     console.log(`All: ${body.ids.length}, sended: ${sended}`);
