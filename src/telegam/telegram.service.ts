@@ -154,6 +154,32 @@ export class TelegramService implements OnModuleInit {
     }
   }
 
+  async sendMessageToBot(body: SendToBot) {
+    let sended = 0;
+
+    for (const id of body.ids) {
+      try {
+        await this.createRequest({
+          action: body.action,
+          data: {
+            chatId: id,
+            ...body.data,
+          },
+        });
+
+        console.log(`Message sended: ${id}`);
+
+        sended++;
+
+        await new Promise((resolve) => setTimeout(resolve, 10_000));
+      } catch (e) {
+        console.log(`Error send to user: ${id}, e: ${e.message}`);
+      }
+    }
+
+    console.log(`All: ${body.ids.length}, sended: ${sended}`);
+  }
+
   async sendToBot(token: string, body: SendToBot) {
     if (token !== this.tgToken) {
       throw new BadRequestException('Error request');
@@ -163,40 +189,11 @@ export class TelegramService implements OnModuleInit {
       throw new BadRequestException('Error request');
     }
 
-    try {
-      let sended = 0;
+    this.sendMessageToBot(body);
 
-      for (const id of body.ids) {
-        try {
-          await this.createRequest({
-            action: body.action,
-            data: {
-              chatId: id,
-              ...body.data,
-            },
-          });
-
-          console.log(`Message sended: ${id}`);
-
-          sended++;
-
-          await new Promise((resolve) => setTimeout(resolve, 10_000));
-        } catch (e) {
-          console.log(`Error send to user: ${id}, e: ${e.message}`);
-        }
-      }
-
-      console.log(`All: ${body.ids.length}, sended: ${sended}`);
-
-      return {
-        success: false,
-        message: 'job created',
-      };
-    } catch (e) {
-      return {
-        success: false,
-        message: 'job failing',
-      };
-    }
+    return {
+      success: false,
+      message: 'job created',
+    };
   }
 }
