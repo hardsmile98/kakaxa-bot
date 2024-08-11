@@ -170,11 +170,11 @@ export class TelegramService implements OnModuleInit {
         console.log(`Message sended: ${id}`);
 
         sended++;
-
-        await new Promise((resolve) => setTimeout(resolve, 10_000));
       } catch (e) {
         console.log(`Error send to user: ${id}, e: ${e.message}`);
       }
+
+      await new Promise((resolve) => setTimeout(resolve, 5_000));
     }
 
     console.log(`All: ${body.ids.length}, sended: ${sended}`);
@@ -192,7 +192,7 @@ export class TelegramService implements OnModuleInit {
     this.sendMessageToBot(body);
 
     return {
-      success: false,
+      success: true,
       message: 'job created',
     };
   }
