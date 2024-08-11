@@ -164,7 +164,7 @@ export class TelegramService implements OnModuleInit {
     }
 
     try {
-      let sending = 0;
+      let sended = 0;
 
       await Promise.all(
         body.ids.map(async (id) => {
@@ -177,7 +177,7 @@ export class TelegramService implements OnModuleInit {
               },
             });
 
-            sending++;
+            sended++;
           } catch (e) {
             console.log(`Error send to user: ${id}, e: ${e.message}`);
           }
@@ -187,13 +187,13 @@ export class TelegramService implements OnModuleInit {
       return {
         success: true,
         all: body.ids.length,
-        sending,
+        sended,
       };
     } catch (e) {
       return {
         success: false,
         all: body.ids.length,
-        sending: 0,
+        sended: 0,
       };
     }
   }
