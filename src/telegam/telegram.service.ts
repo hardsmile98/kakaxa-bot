@@ -177,6 +177,7 @@ export class TelegramService implements OnModuleInit {
             });
           } catch (e) {
             console.log(`Error send to user: ${id}, e: ${e.message}`);
+            console.log(e);
           }
         }),
       );
