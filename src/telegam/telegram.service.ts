@@ -66,7 +66,7 @@ export class TelegramService implements OnModuleInit {
           reply_markup:
             data.keyboard &&
             JSON.stringify({
-              keyboard: data.keyboard,
+              inline_keyboard: data.keyboard,
               resize_keyboard: true,
             }),
         };
@@ -176,7 +176,6 @@ export class TelegramService implements OnModuleInit {
             });
           } catch (e) {
             console.log(`Error send to user: ${id}, e: ${e.message}`);
-            console.log(e);
           }
         }),
       );
