@@ -166,8 +166,8 @@ export class TelegramService implements OnModuleInit {
     try {
       let sended = 0;
 
-      await Promise.all(
-        body.ids.map(async (id) => {
+      Promise.all(
+        body.ids.map(async (id, index) => {
           try {
             await this.createRequest({
               action: body.action,
@@ -178,22 +178,26 @@ export class TelegramService implements OnModuleInit {
             });
 
             sended++;
+
+            await new Promise((resolve) => setTimeout(resolve, 100));
           } catch (e) {
             console.log(`Error send to user: ${id}, e: ${e.message}`);
+          }
+
+          if (index === body.ids.length) {
+            console.log(`All: ${body.ids.length}, sended: ${sended}`);
           }
         }),
       );
 
       return {
-        success: true,
-        all: body.ids.length,
-        sended,
+        success: false,
+        message: 'job created',
       };
     } catch (e) {
       return {
         success: false,
-        all: body.ids.length,
-        sended: 0,
+        message: 'job failing',
       };
     }
   }
