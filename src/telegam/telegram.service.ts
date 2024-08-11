@@ -166,7 +166,7 @@ export class TelegramService implements OnModuleInit {
     try {
       let sended = 0;
 
-      body.ids.forEach(async (id, index) => {
+      for (const id of body.ids) {
         try {
           await this.createRequest({
             action: body.action,
@@ -179,14 +179,14 @@ export class TelegramService implements OnModuleInit {
           console.log(`Message sended: ${id}`);
 
           sended++;
+
+          await new Promise((resolve) => setTimeout(resolve, 10_000));
         } catch (e) {
           console.log(`Error send to user: ${id}, e: ${e.message}`);
         }
+      }
 
-        if (index === body.ids.length - 1) {
-          console.log(`All: ${body.ids.length}, sended: ${sended}`);
-        }
-      });
+      console.log(`All: ${body.ids.length}, sended: ${sended}`);
 
       return {
         success: false,
