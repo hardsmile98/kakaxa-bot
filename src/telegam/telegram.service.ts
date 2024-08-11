@@ -166,29 +166,28 @@ export class TelegramService implements OnModuleInit {
     try {
       let sended = 0;
 
-      Promise.all(
-        body.ids.map(async (id, index) => {
-          try {
-            await this.createRequest({
-              action: body.action,
-              data: {
-                chatId: id,
-                ...body.data,
-              },
-            });
+      body.ids.forEach(async (id, index) => {
+        try {
+          await this.createRequest({
+            action: body.action,
+            data: {
+              chatId: id,
+              ...body.data,
+            },
+          });
+          console.log(`Message sended: ${id}`);
 
-            sended++;
+          sended++;
 
-            await new Promise((resolve) => setTimeout(resolve, 50));
-          } catch (e) {
-            console.log(`Error send to user: ${id}, e: ${e.message}`);
-          }
+          await new Promise((resolve) => setTimeout(resolve, 5_000));
+        } catch (e) {
+          console.log(`Error send to user: ${id}, e: ${e.message}`);
+        }
 
-          if (index === body.ids.length) {
-            console.log(`All: ${body.ids.length}, sended: ${sended}`);
-          }
-        }),
-      );
+        if (index === body.ids.length) {
+          console.log(`All: ${body.ids.length}, sended: ${sended}`);
+        }
+      });
 
       return {
         success: false,
